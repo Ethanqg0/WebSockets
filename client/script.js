@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     ui_message_input.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             ws.send(JSON.stringify({
-                id: userId,
+                userId: userId,
                 message: ui_message_input.value
             }));
             ui_message_input.value = "";
@@ -17,13 +17,18 @@ document.addEventListener("DOMContentLoaded", function() {
     ws.addEventListener("message", function(event) {
         console.log(event.data)
         let data = JSON.parse(event.data);
-        if (data.id) {
-            userId = data.id;
-            console.log("success")
-        } else {
-            console.log("Message from server:", event.data)
+        if (data.userId && !userId) {
+            userId = data.userId;
             let message = document.createElement('p')
-            message.textContent = data.user + ": " + data.message
+            message.textContent = "User " + userId + " connected"
+            ui_messages.appendChild(message)
+        } else {
+            let message = document.createElement('p')
+            if (data.justConnected) {
+                message.textContent = data.message
+            } else {
+                message.textContent = data.userId + ": " + data.message
+            }
             ui_messages.appendChild(message)
         }
     })
