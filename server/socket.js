@@ -11,13 +11,20 @@ const wss = new WebSocket.Server({ server });
 let id = 1;
 
 wss.on("connection", function (socket) {
-  wss.clients.forEach(function each(client) {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send("CONNECTION FROM: " + id);
-    }
-  });
+  // Send the unique ID to the client
+  socket.send(JSON.stringify({ id: id }));
 
   id += 1;
+
+  socket.on("message", function (message) {
+    let data = JSON.parse(String(message));
+    console.log(data)
+    wss.clients.forEach(function each(client) {
+        client.send(
+          JSON.stringify({ user: `User ${data.id}`, message: data.message })
+        );
+    });
+  });
 });
 
 server.listen(3000, function () {
