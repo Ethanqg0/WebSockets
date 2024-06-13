@@ -1,16 +1,16 @@
 document.addEventListener("DOMContentLoaded", function() {
     const ws = new WebSocket("ws://localhost:3000");
     let ui_messages = document.getElementById("ui-messages");
-    let ui_message_label = document.querySelector('label[for="ui-messages-input"]');
     let ui_message_input = document.getElementById("ui-messages-input")
+    let ui_room_label = document.querySelector('label[for="ui-room-input"]');
     let ui_room_input = document.getElementById("ui-room-input")
     let ui_user_id = document.getElementById("ui-user-id")
     let ui_room_id = document.getElementById("ui-room-id")
     let user_id = ""
     let room_id = ""
 
-    ui_message_input.style.visibility = "hidden";
-    ui_message_label.style.visibility = "hidden";
+    ui_message_input.style.display = "none";
+    ui_messages.style.display = "none";
 
     ui_room_input.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
@@ -22,7 +22,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 roomId: room_id
             }));
             ui_room_input.value = "";
-            ui_message_input.style.visibility = "visible";
+            ui_message_input.style.display = "block";
+            ui_messages.style.display = "block";
+            ui_room_input.style.display = "none";
+            ui_room_label.style.display = "none";
         }
     });
 
@@ -40,18 +43,20 @@ document.addEventListener("DOMContentLoaded", function() {
     ws.addEventListener("message", function(event) {
         let data = JSON.parse(event.data);
 
+        // On Connection, set up ID
         if (data.userId && user_id === "") {
             user_id = data.userId;
             ui_user_id.textContent = "User ID: " + user_id;
             console.log("initializing user")
+            return;
+        } 
+        
+        let message = document.createElement('p')
+        if (data.justConnected) {
+            message.textContent = data.message
         } else {
-            let message = document.createElement('p')
-            if (data.justConnected) {
-                message.textContent = data.message
-            } else {
-                message.textContent = data.userId + ": " + data.message
-            }
-            ui_messages.appendChild(message)
+            message.textContent = data.userId + ": " + data.message
         }
+        ui_messages.appendChild(message)
     })
 })
