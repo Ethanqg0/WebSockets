@@ -7,10 +7,9 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 let id = 1;
 
-const rooms = new Map();
+let clients = new Map();
 
 wss.on("connection", function (socket) {
-  // Send the unique ID to the client
   wss.clients.forEach(function each(client) {
     client.send(
       JSON.stringify({ userId: id, message: `User ${id} connected`, justConnected: true })
@@ -21,11 +20,25 @@ wss.on("connection", function (socket) {
 
   socket.on("message", function (message) {
     let data = JSON.parse(String(message));
-    wss.clients.forEach(function each(client) {
+    let room;
+    if (clients.has(data.roomId)) {
+      clients.get(data.roomId).add(socket);
+    } else {
+      clients.set(data.roomId, new Set([socket]));
+    }
+
+    console.log(data)
+
+    room = clients.get(data.roomId);
+    if (room) {
+      room.forEach(function each(client) {
         client.send(
-          JSON.stringify({ userId: `User ${data.userId}`, message: data.message })
+          JSON.stringify({ userId: data.userId, message: data.message, roomId: data.roomId })
         );
-    });
+      });
+    }
+
+    console.log(clients)
   });
 });
 
