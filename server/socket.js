@@ -1,22 +1,17 @@
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-let id = 1;
 
 let clients = new Map();
 
 wss.on("connection", function (socket) {
-  wss.clients.forEach(function each(client) {
-    client.send(
-      JSON.stringify({ userId: id, message: `User ${id} connected`, justConnected: true })
-    );
-  });
-
-  id += 1;
+  let id = uuidv4().substring(0,4);
+  socket.send(JSON.stringify({ userId: id, message: `User ${id} connected`, justConnected: true}));
 
   socket.on("message", function (message) {
     let data = JSON.parse(String(message));
@@ -27,7 +22,6 @@ wss.on("connection", function (socket) {
       clients.set(data.roomId, new Set([socket]));
     }
 
-    console.log(data)
 
     room = clients.get(data.roomId);
     if (room) {
@@ -38,7 +32,6 @@ wss.on("connection", function (socket) {
       });
     }
 
-    console.log(clients)
   });
 });
 

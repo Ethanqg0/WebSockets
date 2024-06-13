@@ -23,4 +23,25 @@ body {
 #main-container {
     width: 80vw;
     padding: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+input {
+    width: 10vw;
+    padding: 5px 20px;
+    background:
+        linear-gradient(canvas, canvas),
+        linear-gradient(120deg,
+        hsl(278, 44%, 73%),
+        hsl(35, 81%, 73%)
+    );
+  border: 4px solid transparent;
+  border-radius: 10px;
+  background-clip: padding-box, border-box; 
+}
+
+input:focus {
+    outline: none;
 }
