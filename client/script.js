@@ -1,16 +1,12 @@
 document.addEventListener("DOMContentLoaded", function() {
     const ws = new WebSocket("ws://localhost:3000");
-    let ui_messages = document.getElementById("ui-messages");
-    let ui_message_input = document.getElementById("ui-messages-input")
     let ui_room_label = document.querySelector('label[for="ui-room-input"]');
     let ui_room_input = document.getElementById("ui-room-input")
     let ui_user_id = document.getElementById("ui-user-id")
     let ui_room_id = document.getElementById("ui-room-id")
+    let ui_document = document.getElementById("ui-document")
     let user_id = ""
     let room_id = ""
-
-    ui_message_input.style.display = "none";
-    ui_messages.style.display = "none";
 
     ui_room_input.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
@@ -22,41 +18,33 @@ document.addEventListener("DOMContentLoaded", function() {
                 roomId: room_id
             }));
             ui_room_input.value = "";
-            ui_message_input.style.display = "block";
-            ui_messages.style.display = "block";
             ui_room_input.style.display = "none";
             ui_room_label.style.display = "none";
         }
     });
 
-    ui_message_input.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            ws.send(JSON.stringify({
-                userId: user_id,
-                message: ui_message_input.value,
-                roomId: room_id
-            }));
-            ui_message_input.value = "";
-        }
+    ui_document.addEventListener("input", function (event) {
+        let message = ui_document.value;
+        ws.send(JSON.stringify({
+            userId: user_id,
+            message: message,
+            roomId: room_id
+        }));
     });
 
     ws.addEventListener("message", function(event) {
         let data = JSON.parse(event.data);
+        ui_document.value = data.message;
 
         // On Connection, set up ID
         if (data.userId && user_id === "") {
             user_id = data.userId;
-            ui_user_id.textContent = "User ID: " + user_id;
-            console.log("initializing user")
+            ui_user_id.value = "User ID: " + user_id;
+            console.log("initializing user");
             return;
         } 
-        
-        let message = document.createElement('p')
-        if (data.justConnected) {
-            message.textContent = data.message
-        } else {
-            message.textContent = data.userId + ": " + data.message
-        }
-        ui_messages.appendChild(message)
-    })
-})
+
+        console.log("USER ID: ", user_id);
+        console.log("Received message!", data);
+    });
+});

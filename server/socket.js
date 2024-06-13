@@ -10,6 +10,7 @@ const wss = new WebSocket.Server({ server });
 let clients = new Map();
 
 wss.on("connection", function (socket) {
+  console.log("Socket connected.")
   let id = uuidv4().substring(0,4);
   socket.send(JSON.stringify({ userId: id, message: `User ${id} connected`, justConnected: true}));
 
@@ -22,7 +23,6 @@ wss.on("connection", function (socket) {
       clients.set(data.roomId, new Set([socket]));
     }
 
-
     room = clients.get(data.roomId);
     if (room) {
       room.forEach(function each(client) {
@@ -32,6 +32,10 @@ wss.on("connection", function (socket) {
       });
     }
 
+  });
+
+  socket.on("close", function () {
+    console.log("Socket closed.");
   });
 });
 
