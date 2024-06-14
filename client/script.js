@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // On Connection, set up ID
         if (data.userId && user_id === "") {
             user_id = data.userId;
-            ui_user_id.value = "User ID: " + user_id;
+            ui_user_id.textContent = "User ID: " + user_id;
             console.log("initializing user");
             return;
         } 
