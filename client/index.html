@@ -5,18 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Sockets</title>
     <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="utility.css">
 </head>
 <body>
     <div id="main-container">
         <p id="ui-title">Web Sockets</p>
 
-        <div>
+        <div class="flex-column gap-4">
             <p id="ui-user-id">User Id:</p>
             <p id="ui-room-id">Current Room ID: N/A</p>
         </div>
 
-        <label for="ui-room-input">Enter Room ID:</label>
-        <input type="text" id="ui-room-input" name="room">
+        <div class="flex-column gap-4">
+            <label for="ui-room-input">Enter Room ID:</label>
+            <input type="text" id="ui-room-input" name="room">
+        </div>
+
+        <input type="file" id="ui-file-input" name="file">
         
         <textarea type="text" id="ui-document" placeholder="enter message"></textarea>
     </div>

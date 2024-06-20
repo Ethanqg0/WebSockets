@@ -29,10 +29,11 @@ body {
     padding: 60px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 30px;
 }
 
-input {
+#ui-room-input {
     width: 10vw;
     padding: 5px 20px;
     background:
@@ -56,3 +57,7 @@ input:focus {
     background-color: rgb(184, 184, 184);
 }
 
+textarea {
+    width: 60vw;
+    height: 60vh;
+}

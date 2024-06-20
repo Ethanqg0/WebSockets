@@ -12,10 +12,12 @@ let clients = new Map();
 wss.on("connection", function (socket) {
   console.log("Socket connected.")
   let id = uuidv4().substring(0,4);
-  socket.send(JSON.stringify({ userId: id, message: `User ${id} connected`, justConnected: true}));
+  // socket.send(JSON.stringify({ userId: id, message: `User ${id} connected`, justConnected: true}));
 
   socket.on("message", function (message) {
+    console.log("Received message: ", message)
     let data = JSON.parse(String(message));
+    console.log("Data: ", data);
     let room;
     if (clients.has(data.roomId)) {
       clients.get(data.roomId).add(socket);
